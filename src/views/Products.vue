@@ -1,6 +1,6 @@
 <template>
     <div class="text-end">
-      <button class="btn btn-primary" type="button" @click="openModal">增加一個產品</button>
+      <button class="btn btn-primary" type="button" @click="openModal(true)">增加一個產品</button>
     </div>
     <table class="table mt-4">
         <thead>
@@ -29,24 +29,25 @@
                 </td>
                 <td>
                     <div class="btn-group">
-                        <button class="btn btn-outline-primary btn-sm">編輯</button>
+                        <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">編輯</button>
                         <button class="btn btn-outline-danger btn-sm">刪除</button>
                     </div>
                 </td>
             </tr>
         </tbody>
     </table>
-    <ProductModal ref="productModal" @product="tempProduct" @update-product="updateProduct"></ProductModal>
+    <ProductModal ref="productModal" :product="tempProduct" @update-product="updateProduct"></ProductModal>
 </template>
 
 <script>
-import ProductModal from '@/components/ProductModal.vue'
+import ProductModal from '../components/ProductModal.vue'
 export default {
   data () {
     return {
       products: [],
       pagination: {},
-      tempProduct: {}
+      tempProduct: {},
+      isNew: false
     }
   },
   components: {
@@ -63,18 +64,28 @@ export default {
           }
         })
     },
-    openModal () {
-      this.tempProduct = {}
+    openModal (isNew, item) {
+      if (isNew) {
+        this.tempProduct = {}
+      } else {
+        this.tempProduct = { ...item }
+      }
+      this.isNew = isNew
       const ProductComponent = this.$refs.productModal
       ProductComponent.showModal()
     },
     updateModal (item) {
       this.tempProduct = item
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`
-      const ProductComponent = this.$refs.productModal
-      this.$http.post(api, { data: this.tempProduct }).then((res) => {
-        console.log(res)
-        ProductComponent.hideModal()
+      let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`
+      let httpMethod = 'post'
+      if (!this.isNew) {
+        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`
+        httpMethod = 'put'
+      }
+      const productComponent = this.$refs.productModal
+      this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
+        console.log(response)
+        productComponent.hideModal()
         this.getProducts()
       })
     }

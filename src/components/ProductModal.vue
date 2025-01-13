@@ -74,12 +74,14 @@
                 <div class="mb-3">
                   <label for="description" class="form-label">產品描述</label>
                   <textarea type="text" class="form-control" id="description"
-                            placeholder="請輸入產品描述"></textarea>
+                            placeholder="請輸入產品描述"
+                            v-model="tempProduct.description"></textarea>
                 </div>
                 <div class="mb-3">
                   <label for="content" class="form-label">說明內容</label>
                   <textarea type="text" class="form-control" id="content"
-                            placeholder="請輸入產品說明內容"></textarea>
+                            placeholder="請輸入產品說明內容"
+                            v-model="tempProduct.content"></textarea>
                 </div>
                 <div class="mb-3">
                   <div class="form-check">
@@ -99,8 +101,7 @@
             <button type="button" class="btn btn-outline-secondary"
                     data-bs-dismiss="modal">取消
             </button>
-            <button type="button" class="btn btn-primary"
-            @click.prevent="$emit('update-product',this.tempProduct)" @click="$emit('update-product', tempProduct)">確認</button>
+            <button type="button" class="btn btn-primary" @click="$emit('update-product', tempProduct)">確認</button>
           </div>
         </div>
       </div>
